@@ -134,11 +134,57 @@ class DrawLine extends View {
         }
         if((xc==2)&&(yc==1)) {
             for (int j = 0; j < s; j++) {
-                int val1=Integer.parseInt ((String) xaxis.get(j));
+                float val1=Float.parseFloat ((String) xaxis.get(j));
+                Log.i("float", String.valueOf(val1));
                 String val2= (String) yaxis.get(j);
-                Object xcc =  xplot.get(val1);
-                Object ycc =  yplot.get(val2);
-                canvas.drawCircle((int) xcc, (int) ycc, 5, coordinate);
+                //X check...
+                if(xplot.containsKey(val1)) {
+                    Object xccc = xplot.get(val1);
+                }
+                else {
+                 float xcc =Float.parseFloat((String) xaxis.get(j));
+                   // float xcc = (float) 1.65;
+
+                    float xcc1 = (float) xplot.get(val1);
+                    float xcc2;
+                    if(j==(s-1)) {
+                         xcc2 = (float) xplot.get(val1-1);
+                    }
+                    else
+                    {
+                         xcc2 = (float) xplot.get(val1+1);
+                    }
+
+                    float dis=(float)xcc2-xcc1;
+                   float decimal_digit=(float)(1.65-1);
+                   String check= String.valueOf(decimal_digit);
+                   String dot=".";
+                   int count=0;
+                   for(int d=0;d<check.length();d++){
+                       if(String.valueOf(check.charAt(d)).equals(dot)){
+                           ++count;
+                           break;
+                       }
+                   }
+                    Log.i("txt", String.valueOf(count));
+                   String decimal=check.substring(count+1);
+                    Log.i("txt", decimal);
+                   float required_digit=Float.parseFloat((decimal));
+                    float value=(float)dis/100;
+                  float value1= (float)((float)required_digit*value) ;
+                  Log.i("txt", String.valueOf(value1));
+                  float xccnew = (Float) (xcc1+value1);
+                    Log.i("txt", String.valueOf(xccnew));
+                    Object xccc=xccnew;
+
+                }
+
+                //ycheck..........
+
+                if(yplot.containsKey(val1)) {
+                    Object yccc = yplot.get(val2);
+                }
+              // canvas.drawCircle((float) xccc, (float) yccc, 5, coordinate);
             }
         }
         if((xc==2)&&(yc==2)) {
@@ -262,9 +308,8 @@ class DrawLine extends View {
         System.arraycopy(xaxisvalues, 0,temp_xaxis, 0, Xaxis.size());
         Arrays.sort(temp_xaxis);
         int xmin = temp_xaxis[0];
-       int xmax = temp_xaxis[Xaxis.size() - 1];
-       //int xmax=Integer.parseInt((String)Collections.max(Xaxis));
-       Log.i("TXT", String.valueOf(xmax));
+        int xmax = temp_xaxis[Xaxis.size() - 1];
+        Log.i("TXT", String.valueOf(Collections.max(Xaxis,null)));
         //................Xscale Generation..................
         int xinc=(xmax-xmin)/Xaxis.size();
         ArrayList xscale=new ArrayList();
@@ -284,24 +329,57 @@ class DrawLine extends View {
         //...........Vertical Lines...............
         int vxs = 100, vxst =100, vys = 100, vyst = length-100;
         int xsplit=((breadth-100)-100)/xscale_count;
+        Log.i("scale", String.valueOf(xsplit));
         for (int i = 0; i <=xscale_count; i++) {
             canvas.drawLine(vxs, vys, vxst, vyst, plot);
             vxs = vxs + xsplit;
             vxst = vxst + xsplit;
         }
         //...........xpoint fixing and Xscale Printing...................
-       int xstart=100+xsplit;int ystart=length-100;
+        int xstart=100+xsplit;int ystart=length-100;
         HashMap xpixel = new HashMap();
+        int temp_inc=(xsplit)/(xinc);
+        Log.i("tempinc", String.valueOf(temp_inc));
+        float inti_tempin=(float) temp_inc/100;
+        Log.i("tempinc", String.valueOf(inti_tempin));
         for(int i=0;i<xscale_count;i++) {
-            int count;
+            int count,internal_count;
             canvas.drawCircle(xstart, ystart, 5, paint);
             canvas.drawText(String.valueOf((Integer) xscale.get(i)), xstart, ystart+50,axis);
+
+
+            //......1 t0 100...
+            float axis_value=(float)temp_inc/100;
+            int internal_plot=(Integer) xscale.get(i);
+            for(internal_count=1;internal_count<=100;internal_count++) {
+                float val=(float)((internal_plot)+(float) (internal_count*0.01));
+                Log.i("tempinc", String.valueOf(val));
+                float internal_axis= (float)((xstart)+(float)(axis_value*internal_count));
+                Log.i("tempinc", String.valueOf(internal_axis));
+                xpixel.put(val, internal_axis);
+            }
+            //......................................//
+
+
+
             xpixel.put(xscale.get(i), xstart);
             int plot=(Integer) xscale.get(i);
-            int temp_inc=(xsplit)/(xinc);
             for(count=1;count<=xinc;count++) {
                 ++plot;
                 xpixel.put(plot, xstart+(temp_inc*count));
+
+                //......1 t0 100...
+                float axis_value1=(float)temp_inc/100;
+                int internal_plot1=plot;
+                for(int internal_count1=1;internal_count1<=100;internal_count1++) {
+                    float val=(float)((internal_plot1)+(float) (internal_count1*0.01));
+                    Log.i("tempinc", String.valueOf(val));
+                    float internal_axis1= (float)((xstart)+(float)(axis_value1*internal_count1));
+                    Log.i("tempinc", String.valueOf(internal_axis1));
+                    xpixel.put(val, internal_axis1);
+                }
+                //......................................//
+
             }
             xstart+=xsplit;
         }
