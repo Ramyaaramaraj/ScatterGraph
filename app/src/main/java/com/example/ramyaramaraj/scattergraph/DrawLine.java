@@ -116,7 +116,7 @@ class DrawLine extends View {
     }
     private void plot(ArrayList xaxis, ArrayList yaxis,  HashMap xplot, HashMap yplot, Canvas canvas, int xc, int yc) {
         int s=xaxis.size();
-        if((xc==1)&&(yc==1)) {
+        if((xc==1)&&(yc==1)) { //X and Y Integer
             for (int j = 0; j < s; j++) {
                 String val1= (String) xaxis.get(j);
                 String val2= (String) yaxis.get(j);
@@ -125,16 +125,60 @@ class DrawLine extends View {
                 canvas.drawCircle((int) xcc, (int) ycc, 5, coordinate);
             }
         }
-        if((xc==1)&&(yc==2)) {
+        if((xc==1)&&(yc==2)) {  //X String Y Float
             for (int j = 0; j < s; j++) {
-                String val1= (String) xaxis.get(j);
-                int val2=Integer.parseInt ((String) yaxis.get(j));
-                Object xcc =  xplot.get(val1);
-                Object ycc =  yplot.get(val2);
-                canvas.drawCircle((int) xcc, (int) ycc, 5, coordinate);
+                    String val2=(String) yaxis.get(j);
+                    float tc=Float.parseFloat(val2);
+                    //Check wheather the number is Integer or Float..........
+                    if((yplot.containsKey(tc))) {
+                        float new_value=  Float.parseFloat((String)yaxis.get(j));
+                        String val1= (String) xaxis.get(j);
+                        Object ycc =  yplot.get(new_value);
+                        Object xcc =  xplot.get(val1);
+                        canvas.drawCircle((int) xcc, (int) ycc, 5, coordinate);
+                    }
+                    else {
+                        float val;
+                        //...............Float Logic.....
+                        float xcc =Float.parseFloat((String) yaxis.get(j));
+                        //...........Integer part separation........
+                        int integer_part= (int) xcc;
+                        //........Decimal part separation........
+                        String dot=".";
+                        int count=0;
+                        for(int d=0;d<val2.length();d++) {
+                            if(String.valueOf(val2.charAt(d)).equals(dot)) {
+                                ++count;
+                                break;
+                            }
+                        }
+                        String decimal=val2.substring(count+1);
+                        float decimal_part=Float.parseFloat((decimal));
+                        //...........Distance between two Elements.................
+                        int distance;
+                        Object temp1=yplot.get((float)integer_part);
+                        Object temp2;
+                        int v=s-1;
+                        if(j==v) {
+                            temp2=yplot.get((float)integer_part-1);
+                        }
+                        else {
+                            temp2=yplot.get((float)integer_part+1);
+                        }
+                        //distance=Integer.parseInt((String) temp2)-Integer.parseInt((String) temp1);
+                        distance=(int)temp2-(int)temp1;
+                        //.................Internal Distance Calculation..............
+                        float internal_distance=(float)distance/100;
+                        //..........New Pixel......
+                        float pixel_new= (float)((float)internal_distance*decimal_part) ;
+                        val=(int)temp1+pixel_new;
+                        String val1= (String) xaxis.get(j);
+                        Object xcc_f =  xplot.get(val1);
+                        canvas.drawCircle((int)xcc_f,(int) val, 5, coordinate);
+                    }
             }
         }
-        if((xc==2)&&(yc==1)) {   //X Int or Float....//
+        if((xc==2)&&(yc==1)) {   //X String...Y Int or Float....//
             for (int j = 0; j < s; j++) {
                 //int val1=Integer.parseInt ((String) xaxis.get(j));;
                 String val1=(String) xaxis.get(j);
@@ -189,7 +233,7 @@ class DrawLine extends View {
                 }
             }
         }
-        if((xc==2)&&(yc==2)) {
+        if((xc==2)&&(yc==2)) {    //X And Y String
             for (int j = 0; j < s; j++) {
                 int val1=Integer.parseInt ((String) xaxis.get(j));
                 int val2=Integer.parseInt ((String) yaxis.get(j));
@@ -203,7 +247,8 @@ class DrawLine extends View {
         //................Yarray Creation.........
         int yaxis[]=new int[Yaxis.size()];
         for(int i=0;i<Yaxis.size();i++) {
-            yaxis[i]= Integer.parseInt((String) Yaxis.get(i)) ;
+            float temp=Float.parseFloat((String) Yaxis.get(i));
+            yaxis[i]= (int)(temp) ;
         }
         //.................TempArray Generation..........
         //.....................Y.................
@@ -244,14 +289,14 @@ class DrawLine extends View {
             int count;
             canvas.drawCircle(xstart, ystart, 5, paint);
             canvas.drawText(String.valueOf((Integer) yscale.get(i)), xstart-60, ystart, axis);
-            ypixel.put(yscale.get(i), ystart);
+            ypixel.put(Float.parseFloat(String.valueOf(yscale.get(i))), ystart);
             int plot=(Integer) yscale.get(i);
             int temp_inc=ysplit/(yinc);
             Log.i("this", String.valueOf(temp_inc));
             Log.i("s", String.valueOf(ysplit));
             for(count=1;count<=yinc;count++) {
                 ++plot;
-                ypixel.put(plot, ystart-(temp_inc*count));
+                ypixel.put((float)plot, ystart-(temp_inc*count));
             }
             ystart-=ysplit;
         }
