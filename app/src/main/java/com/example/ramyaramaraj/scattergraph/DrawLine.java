@@ -4,6 +4,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.support.annotation.Nullable;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
@@ -12,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-
 class DrawLine extends View {
     Paint paint = new Paint();
     Paint point = new Paint();
@@ -20,8 +21,9 @@ class DrawLine extends View {
     Paint axis = new Paint();
     Paint coordinate = new Paint();
     Paint labels = new Paint();
-    public DrawLine(Context context) {
-        super(context);
+
+    public DrawLine(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
         paint.setColor(Color.BLACK);
         point.setColor(Color.BLUE);
         plot.setColor(Color.RED);
@@ -29,8 +31,13 @@ class DrawLine extends View {
         coordinate.setColor(Color.BLUE);
         labels.setColor(Color.GREEN);
     }
-    Content_details cvalues;
-    public  void setvalues(Content_details cd) {
+
+    public DrawLine(Context context) {
+        super(context);
+
+    }
+    HashMap<String,ArrayList> cvalues;
+    public  void setvalues(HashMap<String,ArrayList> cd) {
         cvalues =cd;
         postInvalidate();
     }
@@ -38,42 +45,32 @@ class DrawLine extends View {
     public void onDraw(Canvas canvas) {
         if (cvalues != null) {
             //.........................Canvas Attributes..................
-            ArrayList Canvas_details=new ArrayList();
-            Canvas_details=cvalues.getCanvas_details();
-            int length= Integer.parseInt( (String) Canvas_details.get(0));
-            int breadth= Integer.parseInt( (String)Canvas_details.get(1));
-            int x= Integer.parseInt( (String)Canvas_details.get(2));
-            int y= Integer.parseInt( (String) Canvas_details.get(3));
+            int length= 900;
+            int breadth=900;
             int size = getResources().getDimensionPixelSize(R.dimen.myFontSize);
             axis.setTextSize(size);
-            //.....................Range and Point Count...............
-            ArrayList range=new ArrayList();
-            range=cvalues.getRange();
-            int xmax_range=Integer.parseInt( (String) range.get(0));
-            int ymax_range=Integer.parseInt( (String) range.get(1));
-            int point_count=Integer.parseInt( (String) range.get(2));
             //..................Labels................
-            ArrayList Caption=new ArrayList();
-            Caption=cvalues.getCaption();
+            ArrayList Labels=new ArrayList();
+            Labels.addAll(cvalues.get("Labels"));
             size = getResources().getDimensionPixelSize(R.dimen.myFontSize);
             point.setTextSize(size);
             labels.setTextSize(size);
-            canvas.drawText((String) Caption.get(0), breadth/2-150, 30, point);
-            canvas.drawText((String) Caption.get(1), breadth/2-100, 70, point);
+            canvas.drawText((String) Labels.get(0), breadth/2-150, 30, point);
+            canvas.drawText((String) Labels.get(1), breadth/2-100, 70, point);
             Path path = new Path();
             path.moveTo(length-50,length/2);
             path.lineTo(length-50,length/2-100);
             canvas.drawPath(path, point);
-            canvas.drawTextOnPath((String) Caption.get(2),path,0,0,point);
+            canvas.drawTextOnPath((String) Labels.get(2),path,0,0,point);
             //...............Rectangle Creation..............
             paint.setColor(Color.BLACK);
             paint.setStyle(Paint.Style.STROKE);
             canvas.drawRect(100, 100, breadth-100, length-100,paint);
             //.............Xarray and Yarray Creation................
             ArrayList Xaxis=new ArrayList();
-            Xaxis=cvalues.getXaxis();
+            Xaxis.addAll(cvalues.get("Xaxis"));
             ArrayList Yaxis=new ArrayList();
-            Yaxis=cvalues.getYaxis();
+            Yaxis.addAll(cvalues.get("Yaxis"));
             //.............XFormat Checking.............
             String xcheck=(String) Xaxis.get(0);
             int check=xFormat(xcheck);
@@ -116,10 +113,10 @@ class DrawLine extends View {
     }
     private void plot(ArrayList xaxis, ArrayList yaxis,  HashMap xplot, HashMap yplot, Canvas canvas, int xc, int yc) {
         int s=xaxis.size();
-        if((xc==1)&&(yc==1)) { //X and Y Integer
+        if((xc==1)&&(yc==1)) { //X and Y String
             for (int j = 0; j < s; j++) {
-                String val1= (String) xaxis.get(j);
-                String val2= (String) yaxis.get(j);
+                String val1=(String) xaxis.get(j);
+                String val2=(String) yaxis.get(j);
                 Object xcc =  xplot.get(val1);
                 Object ycc =  yplot.get(val2);
                 canvas.drawCircle((int) xcc, (int) ycc, 5, coordinate);
@@ -178,13 +175,12 @@ class DrawLine extends View {
                     }
             }
         }
-        if((xc==2)&&(yc==1)) {   //X String...Y Int or Float....//
+        if((xc==2)&&(yc==1)) {   //X Number....Y String....//
             for (int j = 0; j < s; j++) {
                 //int val1=Integer.parseInt ((String) xaxis.get(j));;
                 String val1=(String) xaxis.get(j);
                 float tc=Float.parseFloat(val1);
                 //Check wheather the number is Integer or Float..........
-
                 if((xplot.containsKey(tc))){
                     float new_value=  Float.parseFloat((String)xaxis.get(j));
                     String val2= (String) yaxis.get(j);
@@ -220,7 +216,6 @@ class DrawLine extends View {
                     else {
                         temp2=xplot.get((float)integer_part+1);
                     }
-                    //distance=Integer.parseInt((String) temp2)-Integer.parseInt((String) temp1);
                     distance=(int)temp2-(int)temp1;
                     //.................Internal Distance Calculation..............
                     float internal_distance=(float)distance/100;
@@ -233,13 +228,114 @@ class DrawLine extends View {
                 }
             }
         }
-        if((xc==2)&&(yc==2)) {    //X And Y String
+        if((xc==2)&&(yc==2)) {    //X And Y Number
+            Object xcc_f,ycc_f;
             for (int j = 0; j < s; j++) {
-                int val1=Integer.parseInt ((String) xaxis.get(j));
-                int val2=Integer.parseInt ((String) yaxis.get(j));
-                Object xcc =  xplot.get(val1);
-                Object ycc =  yplot.get(val2);
-                canvas.drawCircle((int) xcc, (int) ycc, 5, coordinate);
+                //....................Corresponding X Range....................//
+                String val2_x=(String) xaxis.get(j);
+                float tc_x=Float.parseFloat(val2_x);
+                //Check wheather the number is Integer or Float..........
+                if((xplot.containsKey(tc_x))) {
+                    Log.i("Enter xi","Enterinhg x int ");
+                    float new_value_x=  Float.parseFloat((String)xaxis.get(j));
+                    String val1_x= (String) xaxis.get(j);
+                    float temp_val1_x=Float.parseFloat(val1_x);
+                    xcc_f = (int) xplot.get(temp_val1_x);
+                    Log.i("msg","1 x");
+                }
+                else {
+                    Log.i("Enter xf","Entering x float");
+                    float val_x;
+                    //...............Float Logic.....
+                    float xcc_x =Float.parseFloat((String) xaxis.get(j));
+                    //...........Integer part separation........
+                    int integer_part_x= (int) xcc_x;
+                    //........Decimal part separation........
+                    String dot_x=".";
+                    int count_x=0;
+                    for(int d=0;d<val2_x.length();d++) {
+                        if(String.valueOf(val2_x.charAt(d)).equals(dot_x)) {
+                            break;
+                        }
+                        ++count_x;
+                    }
+                    String decimal_x=val2_x.substring(count_x+1);
+                    float decimal_part_x=Float.parseFloat((decimal_x));
+                    //...........Distance between two Elements.................
+                    int distance_x;
+                    Object temp1=xplot.get((float)integer_part_x);
+                    Log.i("S", String.valueOf(temp1));
+                    Object temp2;
+                    int v=s-1;
+                    if(j==v) {
+                        temp2=xplot.get((float)integer_part_x-1);
+                    }
+                    else {
+                        temp2=xplot.get((float)integer_part_x+1);
+                    }
+                    distance_x=(int)temp2-(int)temp1;
+                    //.................Internal Distance Calculation..............
+                    float internal_distance_x=(float)distance_x/100;
+                    //..........New Pixel......
+                    float pixel_new= (float)((float)internal_distance_x*decimal_part_x) ;
+                    val_x=(int)temp1+pixel_new;
+                    xcc_f = (int)val_x;
+                    Log.i("msg","Exit X float");
+
+                }
+                //....................Corresponding Y Range....................//
+                String val2_y=(String) yaxis.get(j);
+                float tc_y=Float.parseFloat(val2_y);
+                //Check wheather the number is Integer or Float..........
+                if((yplot.containsKey(tc_y))) {
+                    Log.i("Enter yi","Enterinhg y int ");
+                    float new_value_y=  Float.parseFloat((String)yaxis.get(j));
+                    String val1_y= (String) yaxis.get(j);
+                    float temp_val1_y=Float.parseFloat(val1_y);
+                    ycc_f = (int) yplot.get(temp_val1_y);
+                    Log.i("y ", String.valueOf((int)ycc_f));
+                    Log.i("msg","123");
+                }
+                else {
+                    Log.i("Enter yf ","Enterinhg y float ");
+                    float val_y;
+                    //...............Float Logic.....
+                    float xcc_y =Float.parseFloat((String) yaxis.get(j));
+                    //...........Integer part separation........
+                    int integer_part= (int) xcc_y;
+                    //........Decimal part separation........
+                    String dot_y=".";
+                    int count_y=0;
+                    for(int d=0;d<val2_y.length();d++) {
+                        if(String.valueOf(val2_y.charAt(d)).equals(dot_y)) {
+                            ++count_y;
+                            break;
+                        }
+                    }
+                    String decimal_y=val2_y.substring(count_y+1);
+                    float decimal_part_y=Float.parseFloat((decimal_y));
+                    //...........Distance between two Elements.................
+                    int distance_y;
+                    Object temp1_y=yplot.get((float)integer_part);
+                    Object temp2_y;
+                    int v_y=s-1;
+                    if(j==v_y) {
+                        temp2_y=yplot.get((float)integer_part-1);
+                    }
+                    else {
+                        temp2_y=yplot.get((float)integer_part+1);
+                    }
+                    distance_y=(int)temp2_y-(int)temp1_y;
+                    //.................Internal Distance Calculation..............
+                    float internal_distance_y=(float)distance_y/100;
+                    //..........New Pixel......
+                    float pixel_new= (float)((float)internal_distance_y*decimal_part_y) ;
+                    val_y=(int)temp1_y+pixel_new;
+                    ycc_f = (int)val_y;
+
+
+                }
+            canvas.drawCircle((int) xcc_f, (int)ycc_f, 5, coordinate);
             }
         }
     }
@@ -294,11 +390,22 @@ class DrawLine extends View {
             int temp_inc=ysplit/(yinc);
             Log.i("this", String.valueOf(temp_inc));
             Log.i("s", String.valueOf(ysplit));
-            for(count=1;count<=yinc;count++) {
-                ++plot;
-                ypixel.put((float)plot, ystart-(temp_inc*count));
+            if(temp_inc!=0) {
+                for (count = 1; count <= yinc; count++) {
+                    ++plot;
+                    ypixel.put((float) plot, ystart - (temp_inc * count));
+                }
+                ystart-=ysplit;
             }
-            ystart-=ysplit;
+            else
+            {
+                temp_inc=1;
+                for (count = 1; count <= yinc; count++) {
+                    ++plot;
+                    ypixel.put((float) plot, ystart - (temp_inc * count));
+                }
+                ystart-=ysplit;
+            }
         }
         Log.i("Xsize", String.valueOf(ypixel));
         return ypixel;
@@ -392,12 +499,24 @@ class DrawLine extends View {
             canvas.drawCircle(xstart, ystart, 5, paint);
             canvas.drawText(String.valueOf((int) xscale.get(i)), xstart, ystart+50,axis);
             xpixel.put(Float.parseFloat(String.valueOf(xscale.get(i))), xstart);
-           int plot=( int) xscale.get(i);
-            for(count=1;count<=xinc;count++) {
-                ++plot;
-                xpixel.put((float)plot,xstart+(temp_inc*count));
+            int plot=( int) xscale.get(i);
+            if(temp_inc!=0) {
+                for (count = 1; count <= xinc; count++) {
+                    ++plot;
+                    xpixel.put((float) plot, xstart + (temp_inc * count));
+                }
+                xstart += xsplit;
             }
-            xstart+=xsplit;
+            else
+            {
+                temp_inc=0;
+                for (count = 1; count <= xinc; count++) {
+                    ++plot;
+                    xpixel.put((float) plot, xstart + (temp_inc * count));
+                }
+                xstart += xsplit;
+
+            }
         }
         return  xpixel;
     }
@@ -405,12 +524,10 @@ class DrawLine extends View {
     public int xFormat(String xval) {
         int count=0;
         for(int i = 0; i < xval.length(); i++) {
-            if(Character.isDigit(xval.charAt(i))) {
-                Log.i("scale", String.valueOf(count));
+            if((Character.isDigit(xval.charAt(i)))||(Boolean)((String.valueOf(xval.charAt(i))).equals("."))) {
                 ++count;
             }
             else {
-                Log.i("scale","String");
                 count=0;
                 break;
             }
@@ -421,12 +538,10 @@ class DrawLine extends View {
     public int yFormat(String yval) {
         int count=0;
         for(int i = 0; i < yval.length(); i++) {
-            if(Character.isDigit(yval.charAt(i))) {
-                Log.i("scale", String.valueOf(count));
+            if((Character.isDigit(yval.charAt(i)))||(Boolean)((String.valueOf(yval.charAt(i))).equals("."))) {
                 ++count;
             }
             else {
-                Log.i("scale","String");
                 count=0;
                 break;
             }
