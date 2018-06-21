@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_centerHorizontal="true"
-    android:layout_centerVertical="true"
-    android:id="@+id/rel">
+    tools:context=".MainActivity"
+    >
 
+    <com.example.ramyaramaraj.scattergraph.DrawLine
+        android:layout_width="900px"
+        android:layout_height="900px"
+        android:layout_marginLeft="25px"
+        android:layout_marginTop="25px"
+        android:background="@drawable/ic_launcher_background"
+        android:id="@+id/grap"/>
 </RelativeLayout>

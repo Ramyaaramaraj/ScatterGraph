@@ -1,0 +1,53 @@
+{
+    "plot": [
+      {
+        "xaxis_point": "1996",
+        "yaxis_points": "10.2"
+      },
+      {
+        "xaxis_point": "2019",
+        "yaxis_points": "18.5"
+      },
+      {
+        "xaxis_point": "2010",
+        "yaxis_points": "34"
+      },
+      {
+        "xaxis_point": "2003",
+        "yaxis_points": "42.88"
+      },
+      {
+        "xaxis_point": "2015",
+        "yaxis_points": "50"
+      }
+    ],
+    "label": [
+      {
+        "title": "Month vs Profit"
+      },
+      {
+        "title": "Month"
+      },
+      {
+        "title": "Profit"
+      }
+    ],
+    "colours": [
+      {
+        "color": "#0F8BFE"
+      },
+      {
+        "color": "#05F52D"
+      },
+      {
+        "color": "#F8ED06"
+      },
+      {
+        "color": "#1B4702"
+      },
+      {
+        "color": "#510602"
+      }
+    ]
+  }
+

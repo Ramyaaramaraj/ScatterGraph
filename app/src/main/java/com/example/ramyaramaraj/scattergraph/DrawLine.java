@@ -21,7 +21,6 @@ class DrawLine extends View {
     Paint axis = new Paint();
     Paint coordinate = new Paint();
     Paint labels = new Paint();
-
     public DrawLine(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         paint.setColor(Color.BLACK);
@@ -31,7 +30,6 @@ class DrawLine extends View {
         coordinate.setColor(Color.BLUE);
         labels.setColor(Color.GREEN);
     }
-
     public DrawLine(Context context) {
         super(context);
 
@@ -45,10 +43,13 @@ class DrawLine extends View {
     public void onDraw(Canvas canvas) {
         if (cvalues != null) {
             //.........................Canvas Attributes..................
-            int length= 900;
-            int breadth=900;
+            int length= canvas.getHeight();
+            int breadth=canvas.getWidth();
             int size = getResources().getDimensionPixelSize(R.dimen.myFontSize);
             axis.setTextSize(size);
+            //..................Colours................
+            ArrayList colours=new ArrayList();
+            colours.addAll(cvalues.get("Colours"));
             //..................Labels................
             ArrayList Labels=new ArrayList();
             Labels.addAll(cvalues.get("Labels"));
@@ -65,6 +66,8 @@ class DrawLine extends View {
             //...............Rectangle Creation..............
             paint.setColor(Color.BLACK);
             paint.setStyle(Paint.Style.STROKE);
+            int length_dec=length/20;
+            int breadth_dec=breadth/20;
             canvas.drawRect(100, 100, breadth-100, length-100,paint);
             //.............Xarray and Yarray Creation................
             ArrayList Xaxis=new ArrayList();
@@ -84,7 +87,7 @@ class DrawLine extends View {
                     break;
                 default:
                     Log.i("scale","Integer");
-                    xplot=xInteger(Xaxis,canvas,length,breadth);
+                    xplot=xNumber(Xaxis,canvas,length,breadth);
                     xc=2;
                     break;
             }
@@ -101,7 +104,7 @@ class DrawLine extends View {
                     break;
                 default:
                     Log.i("scale","y...Integer");
-                    yplot= yInteger(Yaxis,canvas,length,breadth);
+                    yplot= yNumber(Yaxis,canvas,length,breadth);
                     yc=2;
                     break;
             }
@@ -339,7 +342,7 @@ class DrawLine extends View {
             }
         }
     }
-    private HashMap yInteger(ArrayList Yaxis, Canvas canvas, int length, int breadth) {
+    private HashMap yNumber(ArrayList Yaxis, Canvas canvas, int length, int breadth) {
         //................Yarray Creation.........
         int yaxis[]=new int[Yaxis.size()];
         for(int i=0;i<Yaxis.size();i++) {
@@ -357,16 +360,34 @@ class DrawLine extends View {
         int yinc=(ymax-ymin)/Yaxis.size();
         ArrayList yscale=new ArrayList();
         int temp=ymin;
-        for(;;) {
-            if(temp<=ymax) {
-                yscale.add(temp);
-                temp=temp+yinc;
-            }
-            else {
-                yscale.add(temp);
-                break;
+        if(yinc!=0)
+        {
+            for(;;) {
+                if(temp<=ymax) {
+                    yscale.add(temp);
+                    temp=temp+yinc;
+                }
+                else {
+                    yscale.add(temp);
+                    break;
+                }
             }
         }
+        else
+        {
+            yinc=1;
+            for(;;) {
+                if(temp<=ymax) {
+                    yscale.add(temp);
+                    temp=temp+yinc;
+                }
+                else {
+                    yscale.add(temp);
+                    break;
+                }
+            }
+        }
+
         Log.i("txt", String.valueOf(Yaxis));
         Log.i("yyscale", String.valueOf(yscale));
         int yscale_count=yscale.size();
@@ -450,7 +471,7 @@ class DrawLine extends View {
         }
         return  xpixel;
     }
-    private HashMap xInteger(ArrayList Xaxis,Canvas canvas,int length,int breadth) {
+    private HashMap xNumber(ArrayList Xaxis,Canvas canvas,int length,int breadth) {
         //.............Xarray Creation................
         int xaxisvalues[]=new int[Xaxis.size()];
         for(int i=0;i<Xaxis.size();i++) {
@@ -468,16 +489,34 @@ class DrawLine extends View {
        int xinc= (int) ((xmax-xmin)/Xaxis.size());
         ArrayList xscale=new ArrayList();
         int temp=(int)xmin;
-        for(;;) {
-            if(temp<=xmax) {
-                xscale.add(temp);
-                temp=temp+xinc;
-            }
-            else {
-                xscale.add(temp);
-                break;
+        if(xinc!=0)
+        {
+            for(;;) {
+                if(temp<=xmax) {
+                    xscale.add(temp);
+                    temp=temp+xinc;
+                }
+                else {
+                    xscale.add(temp);
+                    break;
+                }
             }
         }
+        else
+        {
+            xinc=1;
+            for(;;) {
+                if(temp<=xmax) {
+                    xscale.add(temp);
+                    temp=temp+xinc;
+                }
+                else {
+                    xscale.add(temp);
+                    break;
+                }
+            }
+        }
+
         Log.i("scale", String.valueOf(xscale));
         int xscale_count=xscale.size();
         //...........Vertical Lines...............

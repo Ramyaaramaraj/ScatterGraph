@@ -6,98 +6,86 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.RelativeLayout;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 public class MainActivity extends AppCompatActivity {
-        DrawLine drawLine;
-        int h,w,x,y;
-        ArrayList Canvas_details=new ArrayList();
-        ArrayList Xaxis=new ArrayList();
-        ArrayList Yaxis=new ArrayList();
-        ArrayList caption=new ArrayList();
-        ArrayList range=new ArrayList();
+
         @Override
-        public void onCreate(Bundle savedInstanceState) {
+
+        protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            try {
-                InputStream is = getAssets().open("details.xml");
-                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document doc = dBuilder.parse(is);
-                Element element = doc.getDocumentElement();
-                element.normalize();
-                NodeList nList = doc.getElementsByTagName("rect");
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node node = nList.item(i);
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        Element element2 = (Element) node;
-                        Canvas_details.add(getValue("val", element2));
-                    }
-                }
-                Log.i("canvas", String.valueOf(Canvas_details));
-                 nList = doc.getElementsByTagName("captions");
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node node = nList.item(i);
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        Element element2 = (Element) node;
-                        caption.add(getValue("title", element2));
-                    }
-                }
-                int count=0;
-                nList = doc.getElementsByTagName("plot");
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node node = nList.item(i);
-                    ++count;
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        Element element2 = (Element) node;
-                        Xaxis.add(getValue("xaxis_point", element2));
-                        Yaxis.add(getValue("yaxis_points", element2));
-                    }
-                }
-                nList = doc.getElementsByTagName("limit");
-                for (int i = 0; i < nList.getLength(); i++) {
-                    Node node = nList.item(i);
-                    ++count;
-                    if (node.getNodeType() == Node.ELEMENT_NODE) {
-                        Element element2 = (Element) node;
-                        range.add(getValue("value", element2));
-
-                    }
-                }
-
-
-                // Log.i("val", String.valueOf(count));
-            }catch (Exception e) {e.printStackTrace();}
-            int h= Integer.parseInt( (String) Canvas_details.get(0));
-            int w= Integer.parseInt( (String)Canvas_details.get(1));
-            int x= Integer.parseInt( (String)Canvas_details.get(2));
-            int y= Integer.parseInt( (String) Canvas_details.get(3));
-
-            Content_details cd = new Content_details(Canvas_details,caption,Xaxis,Yaxis,range);
-           Log.i("txt", String.valueOf(Xaxis.get(0)));
-
-            DrawLine d = new DrawLine(this);
             setContentView(R.layout.activity_main);
-            RelativeLayout rel=(RelativeLayout)findViewById(R.id.rel);
-            RelativeLayout.LayoutParams rl=new RelativeLayout.LayoutParams(w,h);
-            rl.setMargins(x,y,0,0);
-            d.setLayoutParams(rl);
-            d.setBackgroundColor(Color.LTGRAY);
-            rel.addView(d);
-            d.setvalues(cd);
+            DrawLine dl = (DrawLine) findViewById(R.id.grap);
+            dl.setvalues(getjson());
         }
-    private static String getValue(String tag, Element element) {
-        NodeList nodeList = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = (Node) nodeList.item(0);
-        return node.getNodeValue();
+       public  HashMap getjson(){
+            HashMap details=new HashMap<String,ArrayList>();
+           ArrayList Xaxis=new ArrayList();
+           ArrayList Yaxis=new ArrayList();
+           ArrayList label=new ArrayList();
+           ArrayList colours=new ArrayList();
+        try {
+            JSONObject obj = new JSONObject(loadJSONFromAsset());
+            JSONArray plot_array = obj.getJSONArray("plot");
+            for (int i = 0; i < plot_array.length(); i++) {
+                JSONObject Xaxis_Array_inside = plot_array.getJSONObject(i);
+                String x_value = Xaxis_Array_inside.getString("xaxis_point");
+                String y_value = Xaxis_Array_inside.getString("yaxis_points");
+                Log.i("x",x_value);
+                Xaxis.add(x_value);
+                Yaxis.add(y_value);
+            }
+            JSONArray label_array = obj.getJSONArray("label");
+            for (int i = 0; i < label_array .length(); i++) {
+                JSONObject label_array_inside = label_array .getJSONObject(i);
+                String label_name = label_array_inside.getString("title");
+                label.add(label_name);
+            }
+            JSONArray colours_array = obj.getJSONArray("colours");
+            for (int i = 0; i < colours_array .length(); i++) {
+                JSONObject colours_array_inside = colours_array .getJSONObject(i);
+                String colour_name = colours_array_inside.getString("color");
+                colours.add(colour_name);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        details.put("Xaxis",Xaxis);
+        details.put("Yaxis",Yaxis);
+        details.put("Labels",label);
+        details.put("Colours",colours);
+
+        return details;
+    }
+    public String loadJSONFromAsset() {
+        String json = null;
+        try {
+            InputStream is = getAssets().open("details.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return json;
     }
 }
+
+

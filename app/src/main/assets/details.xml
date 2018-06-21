@@ -1,99 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
     <details>
-        <Rectangle_detail>                       //Canvas Details
-            <rect>
-                <val>900</val>              //Canvas Height
-            </rect>
-            <rect>
-                <val>900</val>           //Canvas Width
-            </rect>
-            <rect>
-                <val>100</val>      //Start point-X
-            </rect>
-            <rect>
-                <val>100</val>     //Start point-y
-            </rect>
-        </Rectangle_detail>
-
     <points>
-
-
-        <!--    <plot>
-           <xaxis_point>JAN</xaxis_point>
-           <yaxis_points>ONE</yaxis_points>
-       </plot>
-
-       <plot>
-           <xaxis_point>FEB</xaxis_point>
-           <yaxis_points>qq</yaxis_points>
-       </plot>
-
-       <plot>
-           <xaxis_point>MARCH</xaxis_point>
-           <yaxis_points>rrr</yaxis_points>
-       </plot>
-
-       <plot>
-           <xaxis_point>AUGUST</xaxis_point>
-           <yaxis_points>hry</yaxis_points>
-       </plot>
-
-       <plot>
-           <xaxis_point>JUNE</xaxis_point>
-           <yaxis_points>ffff</yaxis_points>
-       </plot>-->
-
-        <plot>
-                    <xaxis_point>1</xaxis_point>
-                    <yaxis_points>qq</yaxis_points>
+                <plot>
+                    <xaxis_point>1996</xaxis_point>
+                    <yaxis_points>10</yaxis_points>
                 </plot>
 
                 <plot>
-                    <xaxis_point>10</xaxis_point>
-                    <yaxis_points>ss</yaxis_points>
+                    <xaxis_point>2005</xaxis_point>
+                    <yaxis_points>18</yaxis_points>
                 </plot>
 
                 <plot>
-                    <xaxis_point>5</xaxis_point>
-                    <yaxis_points>dd</yaxis_points>
+                    <xaxis_point>2010</xaxis_point>
+                    <yaxis_points>34</yaxis_points>
                 </plot>
 
                 <plot>
-                    <xaxis_point>15</xaxis_point>
-                    <yaxis_points>zx</yaxis_points>
+                    <xaxis_point>1998</xaxis_point>
+                    <yaxis_points>42</yaxis_points>
                 </plot>
 
                 <plot>
-                    <xaxis_point>20</xaxis_point>
-                    <yaxis_points>xv</yaxis_points>
+                    <xaxis_point>2012</xaxis_point>
+                    <yaxis_points>50</yaxis_points>
                 </plot>
-
     </points>
-
-    <Range>
-        <limit>
-            <value>1000</value>              //Xmax Value
-        </limit>
-        <limit>
-            <value>750</value>               //Ymax Value
-        </limit>
-        <limit>
-            <value>5</value>                 //Point Count
-        </limit>
-    </Range>
-
     <Title>
     <captions>
-        <title>Month vs Profit</title>        //Title
+        <title>Month vs Profit</title>
     </captions>
     <captions>
-        <title>Month</title>                  //Xaxis Label
+        <title>Month</title>
     </captions>
     <captions>
-        <title>Profit</title>                //Yaxis Label
+        <title>Profit</title>
     </captions>
     </Title>
-
-
 </details>
