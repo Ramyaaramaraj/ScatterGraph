@@ -12,6 +12,6 @@
         android:layout_height="900px"
         android:layout_marginLeft="25px"
         android:layout_marginTop="25px"
-        android:background="@drawable/ic_launcher_background"
+        android:background="@color/lytblue"
         android:id="@+id/grap"/>
 </RelativeLayout>
