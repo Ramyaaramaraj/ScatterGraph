@@ -25,17 +25,18 @@ class DrawLine extends View {
         super(context, attrs);
         paint.setColor(Color.BLACK);
         point.setColor(Color.BLUE);
-        plot.setColor(Color.RED);
-        axis.setColor(Color.YELLOW);
-        coordinate.setColor(Color.BLUE);
-        labels.setColor(Color.GREEN);
+        plot.setColor(Color.BLACK);
+        axis.setColor(Color.RED);
+        coordinate.setColor(Color.MAGENTA);
+        labels.setColor(Color.BLACK);
     }
     public DrawLine(Context context) {
         super(context);
 
     }
-    HashMap<String,ArrayList> cvalues;
-    public  void setvalues(HashMap<String,ArrayList> cd) {
+   // HashMap<String,ArrayList> cvalues;
+    Scatter_chart_details cvalues;
+    public  void setvalues(Scatter_chart_details cd) {
         cvalues =cd;
         postInvalidate();
     }
@@ -49,10 +50,12 @@ class DrawLine extends View {
             axis.setTextSize(size);
             //..................Colours................
             ArrayList colours=new ArrayList();
-            colours.addAll(cvalues.get("Colours"));
+            colours.addAll(cvalues.getColours());
+
+          //  paint.setColor(Integer.parseInt((String) colours.get(0)));
             //..................Labels................
             ArrayList Labels=new ArrayList();
-            Labels.addAll(cvalues.get("Labels"));
+            Labels.addAll(cvalues.getLabel());
             size = getResources().getDimensionPixelSize(R.dimen.myFontSize);
             point.setTextSize(size);
             labels.setTextSize(size);
@@ -71,9 +74,9 @@ class DrawLine extends View {
             canvas.drawRect(100, 100, breadth-100, length-100,paint);
             //.............Xarray and Yarray Creation................
             ArrayList Xaxis=new ArrayList();
-            Xaxis.addAll(cvalues.get("Xaxis"));
+            Xaxis.addAll(cvalues.getXaxis());
             ArrayList Yaxis=new ArrayList();
-            Yaxis.addAll(cvalues.get("Yaxis"));
+            Yaxis.addAll(cvalues.getYaxis());
             //.............XFormat Checking.............
             String xcheck=(String) Xaxis.get(0);
             int check=xFormat(xcheck);
